@@ -17,6 +17,8 @@ option(AEGISX_BUILD_TESTS "Build AegisX tests" ${BUILD_TESTING})
 
 add_library(aegisx_core STATIC
     src/order.cpp
+    src/order_book.cpp
+    src/price_level.cpp
     src/project.cpp
     src/trade.cpp
 )
@@ -48,6 +50,8 @@ if(AEGISX_BUILD_TESTS)
 
     add_executable(aegisx_tests
         tests/order_tests.cpp
+        tests/order_book_tests.cpp
+        tests/price_level_tests.cpp
         tests/smoke_test.cpp
         tests/trade_tests.cpp
     )

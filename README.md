@@ -6,9 +6,10 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 1 - core domain model. The repository contains strongly typed identifiers
-and enums, validated orders, trades, unit tests, a minimal demo, and the CMake
-foundation. Order books and matching are intentionally not implemented yet.
+Phase 2 - price levels and order book. The repository contains strongly typed
+domain objects, validated orders and trades, FIFO price levels, bid/ask price
+priority, best-price access, unit tests, and the CMake foundation. Matching,
+cancellation, and modification are intentionally not implemented yet.
 
 ## Requirements
 
@@ -46,5 +47,5 @@ ctest --test-dir build --output-on-failure
 - Tests for every feature
 - Performance claims supported by measurements from the actual machine
 
-See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the phased scope and
-domain requirements.
+See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) and
+[docs/data-structures.md](docs/data-structures.md) for design details.
