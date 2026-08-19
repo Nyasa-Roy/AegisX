@@ -1,0 +1,33 @@
+# CMake build output
+build/
+cmake-build-*/
+CMakeUserPresets.json
+
+# IDE/editor files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Compiled output
+*.exe
+*.dll
+*.so
+*.dylib
+*.obj
+*.o
+*.a
+
+# Test and coverage output
+Testing/
+*.gcda
+*.gcno
+*.gcov
+coverage/
+
+# Local data and profiling artifacts
+data/*
+!data/.gitkeep
+*.prof
+*.out
