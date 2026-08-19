@@ -16,7 +16,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(AEGISX_BUILD_TESTS "Build AegisX tests" ${BUILD_TESTING})
 
 add_library(aegisx_core STATIC
+    src/order.cpp
     src/project.cpp
+    src/trade.cpp
 )
 
 target_include_directories(aegisx_core
@@ -44,7 +46,11 @@ if(AEGISX_BUILD_TESTS)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
 
-    add_executable(aegisx_tests tests/smoke_test.cpp)
+    add_executable(aegisx_tests
+        tests/order_tests.cpp
+        tests/smoke_test.cpp
+        tests/trade_tests.cpp
+    )
     target_link_libraries(aegisx_tests PRIVATE aegisx_core GTest::gtest_main)
 
     include(GoogleTest)

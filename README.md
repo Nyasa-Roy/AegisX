@@ -1,15 +1,14 @@
 # AegisX
 
 AegisX is a deterministic, event-driven electronic exchange simulator written
-in modern C++. It will evolve incrementally from a correctness-first domain
-model into a testable and benchmarkable systems project.
+in modern C++. It evolves incrementally from a correctness-first domain model
+into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 0 — project foundation. The repository currently contains the CMake
-build, a minimal library and demo executable, GoogleTest integration, and a
-smoke test. Order books, orders, and matching are intentionally not implemented
-yet.
+Phase 1 - core domain model. The repository contains strongly typed identifiers
+and enums, validated orders, trades, unit tests, a minimal demo, and the CMake
+foundation. Order books and matching are intentionally not implemented yet.
 
 ## Requirements
 
