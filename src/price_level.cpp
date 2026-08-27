@@ -21,6 +21,18 @@ void PriceLevel::add_order(Order order) {
     orders_.push_back(std::move(order));
 }
 
+std::optional<Order> PriceLevel::cancel_order(OrderId order_id) {
+    for (auto iterator = orders_.begin(); iterator != orders_.end(); ++iterator) {
+        if (iterator->id() == order_id) {
+            iterator->cancel();
+            Order cancelled_order = std::move(*iterator);
+            orders_.erase(iterator);
+            return cancelled_order;
+        }
+    }
+    return std::nullopt;
+}
+
 Price PriceLevel::price() const noexcept { return price_; }
 bool PriceLevel::empty() const noexcept { return orders_.empty(); }
 std::size_t PriceLevel::size() const noexcept { return orders_.size(); }

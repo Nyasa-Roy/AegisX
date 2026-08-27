@@ -27,6 +27,13 @@ struct OrderRested {
     Quantity remaining_quantity;
 };
 
-using Event = std::variant<OrderAccepted, TradeExecuted, OrderRested>;
+struct OrderCancelled {
+    OrderId order_id;
+    InstrumentId instrument_id;
+    Side side;
+    Quantity remaining_quantity;
+};
+
+using Event = std::variant<OrderAccepted, TradeExecuted, OrderRested, OrderCancelled>;
 
 }  // namespace aegisx

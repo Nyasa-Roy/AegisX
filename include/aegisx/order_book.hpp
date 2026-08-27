@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <functional>
 #include <map>
+#include <optional>
 #include <unordered_set>
 
 #include "aegisx/price_level.hpp"
@@ -14,6 +15,7 @@ public:
     explicit OrderBook(InstrumentId instrument_id);
 
     void add_order(Order order);
+    [[nodiscard]] std::optional<Order> cancel_order(OrderId order_id);
 
     [[nodiscard]] InstrumentId instrument_id() const noexcept;
     [[nodiscard]] bool empty() const noexcept;

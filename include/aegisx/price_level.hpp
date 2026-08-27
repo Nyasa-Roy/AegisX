@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <deque>
+#include <optional>
 
 #include "aegisx/order.hpp"
 
@@ -12,6 +13,7 @@ public:
     explicit PriceLevel(Price price);
 
     void add_order(Order order);
+    [[nodiscard]] std::optional<Order> cancel_order(OrderId order_id);
 
     [[nodiscard]] Price price() const noexcept;
     [[nodiscard]] bool empty() const noexcept;

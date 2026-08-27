@@ -36,6 +36,36 @@ void OrderBook::add_order(Order order) {
     order_ids_.insert(order_id);
 }
 
+std::optional<Order> OrderBook::cancel_order(OrderId order_id) {
+    if (!order_ids_.contains(order_id)) {
+        return std::nullopt;
+    }
+
+    for (auto iterator = bids_.begin(); iterator != bids_.end(); ++iterator) {
+        std::optional<Order> cancelled_order = iterator->second.cancel_order(order_id);
+        if (cancelled_order.has_value()) {
+            order_ids_.erase(order_id);
+            if (iterator->second.empty()) {
+                bids_.erase(iterator);
+            }
+            return cancelled_order;
+        }
+    }
+
+    for (auto iterator = asks_.begin(); iterator != asks_.end(); ++iterator) {
+        std::optional<Order> cancelled_order = iterator->second.cancel_order(order_id);
+        if (cancelled_order.has_value()) {
+            order_ids_.erase(order_id);
+            if (iterator->second.empty()) {
+                asks_.erase(iterator);
+            }
+            return cancelled_order;
+        }
+    }
+
+    return std::nullopt;
+}
+
 InstrumentId OrderBook::instrument_id() const noexcept { return instrument_id_; }
 bool OrderBook::empty() const noexcept { return order_ids_.empty(); }
 std::size_t OrderBook::order_count() const noexcept { return order_ids_.size(); }

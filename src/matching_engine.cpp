@@ -14,6 +14,19 @@ InstrumentId MatchingEngine::instrument_id() const noexcept {
 
 const OrderBook& MatchingEngine::book() const noexcept { return book_; }
 
+std::vector<Event> MatchingEngine::cancel(OrderId order_id) {
+    std::optional<Order> cancelled_order = book_.cancel_order(order_id);
+    if (!cancelled_order.has_value()) {
+        throw std::invalid_argument("order is not active in the matching engine");
+    }
+
+    std::vector<Event> events;
+    events.emplace_back(OrderCancelled{
+        cancelled_order->id(), cancelled_order->instrument_id(), cancelled_order->side(),
+        cancelled_order->remaining_quantity()});
+    return events;
+}
+
 std::vector<Trade> MatchingEngine::submit(Order order) {
     const std::vector<Event> events = submit_events(std::move(order));
     std::vector<Trade> trades;

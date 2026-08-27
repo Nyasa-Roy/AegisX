@@ -17,6 +17,7 @@ public:
 
     std::vector<Trade> submit(Order order);
     std::vector<Event> submit_events(Order order);
+    std::vector<Event> cancel(OrderId order_id);
 
 private:
     OrderBook book_;

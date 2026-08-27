@@ -53,6 +53,7 @@ if(AEGISX_BUILD_TESTS)
         tests/order_tests.cpp
         tests/order_book_tests.cpp
         tests/event_tests.cpp
+        tests/cancellation_tests.cpp
         tests/matching_tests.cpp
         tests/price_level_tests.cpp
         tests/smoke_test.cpp

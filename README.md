@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 5 - structured domain events. The repository contains strongly typed
-domain objects, FIFO price levels, bid/ask price priority, limit and market
-matching, and deterministic `OrderAccepted`, `TradeExecuted`, and `OrderRested`
-events. Cancellation, modification, and market-data snapshots are not
-implemented yet.
+Phase 6 - cancellation. The repository contains strongly typed domain objects,
+FIFO price levels, bid/ask price priority, limit and market matching,
+deterministic domain events, and safe cancellation of active or partially
+filled orders. Modification, exchange routing, and market-data snapshots are
+not implemented yet.
 
 ## Requirements
 
@@ -48,5 +48,6 @@ ctest --test-dir build --output-on-failure
 - Tests for every feature
 - Performance claims supported by measurements from the actual machine
 
-See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) and
-[docs/matching-algorithm.md](docs/matching-algorithm.md) for design details.
+See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md),
+[docs/matching-algorithm.md](docs/matching-algorithm.md), and
+[docs/data-structures.md](docs/data-structures.md) for design details.

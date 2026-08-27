@@ -52,3 +52,8 @@ trades and leaves the book unchanged.
 
 An unfilled market-order remainder produces no resting event because it is
 discarded by the explicit Phase 4 market-order policy.
+
+Cancellation removes an active order from its price level, emits one
+`OrderCancelled` event, updates the order-ID index, and removes the price level
+when it becomes empty. Filled, cancelled, and unknown orders cannot be
+cancelled through the matching engine.
