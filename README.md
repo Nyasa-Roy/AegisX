@@ -6,36 +6,35 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 13 - reference implementation. The repository contains strongly typed
-domain objects, matching, events, cancellation, modification, exchange
-routing, CLI/demo tools, invariants, simulation, event recording/replay, and a
-simple reference engine for differential correctness checks. Benchmarking and
-profiling are not implemented yet.
+Phase 14 - benchmarking. The repository contains strongly typed domain
+objects, matching, events, cancellation, modification, exchange routing,
+CLI/demo tools, invariants, deterministic simulation, replay, and Google
+Benchmark workloads for insertion, matching, cancellation, and mixed events.
+Profiling and optimization are not implemented yet.
 
 ## Requirements
 
 - CMake 3.20 or newer
 - A C++20 compiler
-- Internet access on the first test-enabled configure, so CMake can download
-  the pinned GoogleTest release
+- Internet access on the first configure, so CMake can download GoogleTest and
+  Google Benchmark
 
 ## Build
 
 ```text
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-Run a simulation and replay it:
+Run benchmarks:
 
 ```text
-build\aegisx-sim.exe --orders 100000 --seed 42 --record data\run.log
-build\aegisx-replay.exe --input data\run.log
+build\aegisx_benchmarks.exe --benchmark_min_time=0.1
 ```
 
-Run the demo or interactive CLI with `build\aegisx.exe` and
-`build\aegisx-cli.exe`. On Unix-like systems, use the corresponding `./build/`
-paths.
+Run simulations with `build\aegisx-sim.exe`, replay logs with
+`build\aegisx-replay.exe`, and use `build\aegisx-cli.exe` for interactive
+commands. On Unix-like systems, use the corresponding `./build/` paths.
 
 ## Test
 
@@ -52,7 +51,5 @@ ctest --test-dir build --output-on-failure
 - Performance claims supported by measurements from the actual machine
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md),
-[docs/matching-algorithm.md](docs/matching-algorithm.md),
-[docs/data-structures.md](docs/data-structures.md),
-[docs/simulation.md](docs/simulation.md), and [docs/replay.md](docs/replay.md)
-for design details.
+[docs/performance.md](docs/performance.md), and
+[docs/reference-engine.md](docs/reference-engine.md) for design details.

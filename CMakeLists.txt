@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(AEGISX_BUILD_TESTS "Build AegisX tests" ${BUILD_TESTING})
+option(AEGISX_BUILD_BENCHMARKS "Build AegisX benchmarks" ON)
 
 add_library(aegisx_core STATIC
     src/order.cpp
@@ -53,6 +54,20 @@ target_link_libraries(aegisx-sim PRIVATE aegisx_core)
 
 add_executable(aegisx-replay tools/replay.cpp)
 target_link_libraries(aegisx-replay PRIVATE aegisx_core)
+
+if(AEGISX_BUILD_BENCHMARKS)
+    FetchContent_Declare(
+        googlebenchmark
+        URL https://github.com/google/benchmark/archive/refs/tags/v1.8.3.zip
+    )
+    set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+    set(BENCHMARK_ENABLE_WERROR OFF CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googlebenchmark)
+
+    add_executable(aegisx_benchmarks benchmarks/benchmark_suite.cpp)
+    target_link_libraries(aegisx_benchmarks PRIVATE aegisx_core benchmark::benchmark_main)
+endif()
 
 if(AEGISX_BUILD_TESTS)
     FetchContent_Declare(
