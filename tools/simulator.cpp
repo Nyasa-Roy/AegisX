@@ -5,8 +5,10 @@
 #include <string_view>
 #include <type_traits>
 #include <variant>
+#include <vector>
 
 #include "aegisx/matching_engine.hpp"
+#include "aegisx/replay.hpp"
 #include "aegisx/simulation.hpp"
 
 namespace {
@@ -57,6 +59,7 @@ bool parse_unsigned(std::string_view value, std::uint64_t& result) {
 int main(int argc, char** argv) {
     std::uint64_t order_count = 1000;
     std::uint64_t seed = 42;
+    std::string record_path;
     for (int index = 1; index < argc; ++index) {
         const std::string_view argument{argv[index]};
         if (argument == "--orders" && index + 1 < argc) {
@@ -69,8 +72,10 @@ int main(int argc, char** argv) {
                 std::cerr << "invalid --seed value\n";
                 return 1;
             }
+        } else if (argument == "--record" && index + 1 < argc) {
+            record_path = argv[++index];
         } else {
-            std::cerr << "usage: aegisx-sim [--orders N] [--seed N]\n";
+            std::cerr << "usage: aegisx-sim [--orders N] [--seed N] [--record FILE]\n";
             return 1;
         }
     }
@@ -78,8 +83,17 @@ int main(int argc, char** argv) {
     MatchingEngine engine{1};
     OrderGenerator generator{seed, 1};
     Counters counters;
+    std::vector<SimulationEvent> recorded_events;
+    recorded_events.reserve(static_cast<std::size_t>(order_count));
     for (std::uint64_t index = 0; index < order_count; ++index) {
-        apply(engine, generator.next(engine.book()), counters);
+        SimulationEvent event = generator.next(engine.book());
+        if (!record_path.empty()) {
+            recorded_events.push_back(event);
+        }
+        apply(engine, event, counters);
+    }
+    if (!record_path.empty()) {
+        EventLog::write_file(record_path, recorded_events);
     }
 
     std::cout << "seed=" << seed << " events=" << order_count

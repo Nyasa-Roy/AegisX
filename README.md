@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 11 - deterministic simulation. The repository contains strongly typed
-domain objects, FIFO price levels, limit and market matching, deterministic
-events, cancellation, modification, multi-instrument routing, a CLI/demo,
-runtime invariants, and a state-aware seeded simulator. Replay and benchmarking
-are not implemented yet.
+Phase 12 - event recording and replay. The repository contains strongly typed
+domain objects, FIFO price levels, matching, events, cancellation, modification,
+multi-instrument routing, CLI/demo tools, invariants, deterministic simulation,
+and stable text event-log recording/replay. Reference comparison and
+benchmarking are not implemented yet.
 
 ## Requirements
 
@@ -26,15 +26,16 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Run the simulator:
+Run a recorded simulation and replay it:
 
 ```text
-build\aegisx-sim.exe --orders 100000 --seed 42
+build\aegisx-sim.exe --orders 100000 --seed 42 --record data\run.log
+build\aegisx-replay.exe --input data\run.log
 ```
 
 Run the demo or interactive CLI with `build\aegisx.exe` and
 `build\aegisx-cli.exe`. On Unix-like systems, use `./build/aegisx-sim`,
-`./build/aegisx`, and `./build/aegisx-cli` instead.
+`./build/aegisx-replay`, `./build/aegisx`, and `./build/aegisx-cli` instead.
 
 ## Test
 
