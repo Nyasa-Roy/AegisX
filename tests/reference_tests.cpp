@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstdint>
 #include <type_traits>
 #include <variant>
 
@@ -31,6 +32,20 @@ void expect_same_trade(const Trade& expected, const Trade& actual) {
     EXPECT_EQ(expected.taker_order_id, actual.taker_order_id);
     EXPECT_EQ(expected.price, actual.price);
     EXPECT_EQ(expected.quantity, actual.quantity);
+}
+
+void expect_same_live_book(const MatchingEngine& core, const ReferenceEngine& reference) {
+    ASSERT_EQ(core.book().order_count(), reference.orders().size());
+    for (const Order& reference_order : reference.orders()) {
+        const Order* core_order = core.book().find_order(reference_order.id());
+        ASSERT_NE(core_order, nullptr);
+        EXPECT_EQ(core_order->side(), reference_order.side());
+        EXPECT_EQ(core_order->price(), reference_order.price());
+        EXPECT_EQ(core_order->original_quantity(), reference_order.original_quantity());
+        EXPECT_EQ(core_order->executed_quantity(), reference_order.executed_quantity());
+        EXPECT_EQ(core_order->remaining_quantity(), reference_order.remaining_quantity());
+        EXPECT_EQ(core_order->status(), reference_order.status());
+    }
 }
 
 TEST(ReferenceEngine, MatchesTheCoreEngineOnACompleteScenario) {
@@ -86,6 +101,42 @@ TEST(ReferenceEngine, HandlesPriceTimePriorityClearly) {
     EXPECT_EQ(trades[0].quantity, 50U);
     EXPECT_EQ(trades[1].price, 101);
     EXPECT_EQ(trades[1].quantity, 25U);
+}
+
+TEST(ReferenceEngine, RemainsEquivalentAcrossMultipleDeterministicWorkloads) {
+    constexpr std::size_t workload_count = 8;
+    constexpr std::size_t event_count = 2000;
+
+    for (std::uint64_t seed = 1; seed <= workload_count; ++seed) {
+        MatchingEngine core{1};
+        ReferenceEngine reference{1};
+        OrderGenerator generator{seed * 7919};
+
+        for (std::size_t index = 0; index < event_count; ++index) {
+            const SimulationEvent event = generator.next(core.book());
+            std::visit([&](const auto& typed_event) {
+                using EventType = std::decay_t<decltype(typed_event)>;
+                if constexpr (std::is_same_v<EventType, SubmitEvent>) {
+                    const std::vector<Trade> core_trades = core.submit(typed_event.order);
+                    const std::vector<Trade> reference_trades = reference.submit(typed_event.order);
+                    ASSERT_EQ(core_trades.size(), reference_trades.size());
+                    for (std::size_t trade_index = 0; trade_index < core_trades.size();
+                         ++trade_index) {
+                        expect_same_trade(reference_trades[trade_index], core_trades[trade_index]);
+                    }
+                } else if constexpr (std::is_same_v<EventType, CancelEvent>) {
+                    core.cancel(typed_event.order_id);
+                    reference.cancel(typed_event.order_id);
+                } else {
+                    core.modify(typed_event.order_id, typed_event.new_quantity,
+                                typed_event.new_price);
+                    reference.modify(typed_event.order_id, typed_event.new_quantity,
+                                     typed_event.new_price);
+                }
+            }, event);
+            expect_same_live_book(core, reference);
+        }
+    }
 }
 
 }  // namespace

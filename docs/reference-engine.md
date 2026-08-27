@@ -8,5 +8,7 @@ matching vector entry wins ties.
 The reference engine implements the same limit/market matching, cancellation,
 and modification semantics as the core engine. Differential tests feed both
 engines identical deterministic simulation events and compare every generated
-trade and final live-order state. Its purpose is to expose correctness
-regressions before performance work begins.
+trade and final live-order state. Phase 17 extends this coverage across eight
+deterministic 2,000-event workloads and checks live-book equivalence after
+every event. Its purpose is to expose correctness regressions before
+performance work begins.
