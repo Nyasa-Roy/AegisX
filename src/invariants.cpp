@@ -68,6 +68,9 @@ InvariantReport InvariantChecker::check_book(const OrderBook& book) {
         if (!ids.insert(order->id()).second) {
             report.violations.emplace_back("duplicate active order id");
         }
+        if (book.find_order(order->id()) != order) {
+            report.violations.emplace_back("order location index is inconsistent");
+        }
     }
     if (orders.size() != book.order_count()) {
         report.violations.emplace_back("book order count does not match stored orders");

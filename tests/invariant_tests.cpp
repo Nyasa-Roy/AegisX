@@ -45,4 +45,18 @@ TEST(Invariants, RemovalsAndFillsLeaveTheBookValid) {
     EXPECT_TRUE(InvariantChecker::check_book(engine.book()).valid());
 }
 
+TEST(Invariants, LocationIndexTracksOrdersAcrossPriceLevels) {
+    MatchingEngine engine{7};
+    engine.submit(Order{1, 7, Side::Buy, OrderType::Limit, 10, Price{101}});
+    engine.submit(Order{2, 7, Side::Buy, OrderType::Limit, 10, Price{99}});
+    engine.submit(Order{3, 7, Side::Sell, OrderType::Limit, 10, Price{103}});
+
+    EXPECT_TRUE(InvariantChecker::check_book(engine.book()).valid());
+    ASSERT_FALSE(engine.modify(2, 5, Price{100}).empty());
+    EXPECT_TRUE(InvariantChecker::check_book(engine.book()).valid());
+
+    ASSERT_FALSE(engine.cancel(1).empty());
+    EXPECT_TRUE(InvariantChecker::check_book(engine.book()).valid());
+}
+
 }  // namespace
