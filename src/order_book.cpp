@@ -103,6 +103,24 @@ bool OrderBook::contains_order(OrderId order_id) const noexcept {
     return order_ids_.contains(order_id);
 }
 
+std::vector<const Order*> OrderBook::all_orders() const {
+    std::vector<const Order*> orders;
+    orders.reserve(order_ids_.size());
+    for (const auto& [price, level] : bids_) {
+        (void)price;
+        for (const Order& order : level.orders()) {
+            orders.push_back(&order);
+        }
+    }
+    for (const auto& [price, level] : asks_) {
+        (void)price;
+        for (const Order& order : level.orders()) {
+            orders.push_back(&order);
+        }
+    }
+    return orders;
+}
+
 const Order* OrderBook::find_order(OrderId order_id) const noexcept {
     for (const auto& [price, level] : bids_) {
         (void)price;

@@ -6,10 +6,10 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 9 - CLI and demo. The repository contains strongly typed domain objects,
-FIFO price levels, limit and market matching, deterministic events,
-cancellation, modification, multi-instrument routing, a simple interactive CLI,
-and a complete demonstration scenario. Invariants, simulation, replay, and
+Phase 10 - invariants and correctness. The repository contains strongly typed
+domain objects, FIFO price levels, limit and market matching, deterministic
+events, cancellation, modification, multi-instrument routing, a CLI/demo, and
+runtime-checkable order and book invariants. Simulation, replay, and
 benchmarking are not implemented yet.
 
 ## Requirements
@@ -37,12 +37,6 @@ Run the CLI:
 ```text
 build\aegisx-cli.exe
 ```
-
-Commands include `BUY`, `SELL`, `MARKET_BUY`, `MARKET_SELL`, `CANCEL`,
-`MODIFY`, `BOOK`, `TRADES`, `HELP`, and `QUIT`. Instruments and order IDs are
-numeric; submitted orders receive sequential IDs starting at 1.
-
-On Unix-like systems, use `./build/aegisx` and `./build/aegisx-cli` instead.
 
 ## Test
 

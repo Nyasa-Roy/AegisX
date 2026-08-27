@@ -5,6 +5,7 @@
 #include <map>
 #include <optional>
 #include <unordered_set>
+#include <vector>
 
 #include "aegisx/price_level.hpp"
 
@@ -24,6 +25,7 @@ public:
     [[nodiscard]] std::size_t bid_level_count() const noexcept;
     [[nodiscard]] std::size_t ask_level_count() const noexcept;
     [[nodiscard]] bool contains_order(OrderId order_id) const noexcept;
+    [[nodiscard]] std::vector<const Order*> all_orders() const;
     [[nodiscard]] const Order* find_order(OrderId order_id) const noexcept;
     [[nodiscard]] Order* find_order_mutable(OrderId order_id) noexcept;
     [[nodiscard]] const PriceLevel* best_bid() const noexcept;

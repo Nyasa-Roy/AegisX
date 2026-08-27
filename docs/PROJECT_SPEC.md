@@ -26,7 +26,7 @@ determinism, and measured performance.
 11. Event recording, replay, reference implementation, benchmarking, and
     profiling.
 
-Phase 9 is currently implemented. Future phases must be added incrementally
+Phase 10 is currently implemented. Future phases must be added incrementally
 and accompanied by tests and documentation.
 
 ## Domain decisions
