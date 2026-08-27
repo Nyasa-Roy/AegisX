@@ -4,6 +4,7 @@
 #include <functional>
 #include <map>
 #include <optional>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -37,11 +38,16 @@ public:
 private:
     using BidLevels = std::map<Price, PriceLevel, std::greater<Price>>;
     using AskLevels = std::map<Price, PriceLevel>;
+    struct OrderLocation {
+        Side side;
+        Price price;
+    };
 
     InstrumentId instrument_id_;
     BidLevels bids_;
     AskLevels asks_;
     std::unordered_set<OrderId> order_ids_;
+    std::unordered_map<OrderId, OrderLocation> locations_;
 };
 
 }  // namespace aegisx

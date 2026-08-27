@@ -53,6 +53,22 @@ void benchmark_cancel(benchmark::State& state) {
     }
 }
 
+void benchmark_cancel_many_levels(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+
+    for (auto _ : state) {
+        MatchingEngine engine{1};
+        for (std::size_t index = 0; index < count; ++index) {
+            engine.submit(Order{static_cast<OrderId>(index + 1), 1, Side::Buy,
+                                OrderType::Limit, 1,
+                                Price{100 + static_cast<Price>(index)}});
+        }
+        for (std::size_t index = 0; index < count; ++index) {
+            benchmark::DoNotOptimize(engine.cancel(static_cast<OrderId>(index + 1)));
+        }
+    }
+}
+
 void apply_event(MatchingEngine& engine, const SimulationEvent& event) {
     std::visit([&](const auto& typed_event) {
         using EventType = std::decay_t<decltype(typed_event)>;
@@ -81,6 +97,7 @@ void benchmark_mixed_workload(benchmark::State& state) {
 BENCHMARK(benchmark_order_book_insert)->Arg(100)->Arg(1000);
 BENCHMARK(benchmark_matching)->Arg(100)->Arg(1000);
 BENCHMARK(benchmark_cancel)->Arg(100)->Arg(1000);
+BENCHMARK(benchmark_cancel_many_levels)->Arg(100)->Arg(1000);
 BENCHMARK(benchmark_mixed_workload)->Arg(1000)->Arg(10000);
 
 }  // namespace

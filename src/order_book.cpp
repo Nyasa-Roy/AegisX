@@ -23,8 +23,9 @@ void OrderBook::add_order(Order order) {
     }
 
     const OrderId order_id = order.id();
+    const Side side = order.side();
     const Price price = order.price().value();
-    if (order.side() == Side::Buy) {
+    if (side == Side::Buy) {
         auto [level, inserted] = bids_.try_emplace(price, price);
         (void)inserted;
         level->second.add_order(std::move(order));
@@ -34,63 +35,78 @@ void OrderBook::add_order(Order order) {
         level->second.add_order(std::move(order));
     }
     order_ids_.insert(order_id);
+    locations_.emplace(order_id, OrderLocation{side, price});
 }
 
 std::optional<Order> OrderBook::extract_order(OrderId order_id) {
-    if (!order_ids_.contains(order_id)) {
+    const auto location = locations_.find(order_id);
+    if (location == locations_.end()) {
         return std::nullopt;
     }
 
-    for (auto iterator = bids_.begin(); iterator != bids_.end(); ++iterator) {
-        std::optional<Order> removed_order = iterator->second.remove_order(order_id);
-        if (removed_order.has_value()) {
-            order_ids_.erase(order_id);
-            if (iterator->second.empty()) {
-                bids_.erase(iterator);
+    if (location->second.side == Side::Buy) {
+        auto iterator = bids_.find(location->second.price);
+        if (iterator != bids_.end()) {
+            std::optional<Order> removed_order = iterator->second.remove_order(order_id);
+            if (removed_order.has_value()) {
+                order_ids_.erase(order_id);
+                locations_.erase(location);
+                if (iterator->second.empty()) {
+                    bids_.erase(iterator);
+                }
+                return removed_order;
             }
-            return removed_order;
         }
-    }
-    for (auto iterator = asks_.begin(); iterator != asks_.end(); ++iterator) {
-        std::optional<Order> removed_order = iterator->second.remove_order(order_id);
-        if (removed_order.has_value()) {
-            order_ids_.erase(order_id);
-            if (iterator->second.empty()) {
-                asks_.erase(iterator);
+    } else {
+        auto iterator = asks_.find(location->second.price);
+        if (iterator != asks_.end()) {
+            std::optional<Order> removed_order = iterator->second.remove_order(order_id);
+            if (removed_order.has_value()) {
+                order_ids_.erase(order_id);
+                locations_.erase(location);
+                if (iterator->second.empty()) {
+                    asks_.erase(iterator);
+                }
+                return removed_order;
             }
-            return removed_order;
         }
     }
     return std::nullopt;
 }
 
 std::optional<Order> OrderBook::cancel_order(OrderId order_id) {
-    if (!order_ids_.contains(order_id)) {
+    const auto location = locations_.find(order_id);
+    if (location == locations_.end()) {
         return std::nullopt;
     }
 
-    for (auto iterator = bids_.begin(); iterator != bids_.end(); ++iterator) {
-        std::optional<Order> cancelled_order = iterator->second.cancel_order(order_id);
-        if (cancelled_order.has_value()) {
-            order_ids_.erase(order_id);
-            if (iterator->second.empty()) {
-                bids_.erase(iterator);
+    if (location->second.side == Side::Buy) {
+        auto iterator = bids_.find(location->second.price);
+        if (iterator != bids_.end()) {
+            std::optional<Order> cancelled_order = iterator->second.cancel_order(order_id);
+            if (cancelled_order.has_value()) {
+                order_ids_.erase(order_id);
+                locations_.erase(location);
+                if (iterator->second.empty()) {
+                    bids_.erase(iterator);
+                }
+                return cancelled_order;
             }
-            return cancelled_order;
+        }
+    } else {
+        auto iterator = asks_.find(location->second.price);
+        if (iterator != asks_.end()) {
+            std::optional<Order> cancelled_order = iterator->second.cancel_order(order_id);
+            if (cancelled_order.has_value()) {
+                order_ids_.erase(order_id);
+                locations_.erase(location);
+                if (iterator->second.empty()) {
+                    asks_.erase(iterator);
+                }
+                return cancelled_order;
+            }
         }
     }
-
-    for (auto iterator = asks_.begin(); iterator != asks_.end(); ++iterator) {
-        std::optional<Order> cancelled_order = iterator->second.cancel_order(order_id);
-        if (cancelled_order.has_value()) {
-            order_ids_.erase(order_id);
-            if (iterator->second.empty()) {
-                asks_.erase(iterator);
-            }
-            return cancelled_order;
-        }
-    }
-
     return std::nullopt;
 }
 
@@ -122,16 +138,27 @@ std::vector<const Order*> OrderBook::all_orders() const {
 }
 
 const Order* OrderBook::find_order(OrderId order_id) const noexcept {
-    for (const auto& [price, level] : bids_) {
-        (void)price;
+    const auto location = locations_.find(order_id);
+    if (location == locations_.end()) {
+        return nullptr;
+    }
+    if (location->second.side == Side::Buy) {
+        const auto iterator = bids_.find(location->second.price);
+        if (iterator == bids_.end()) {
+            return nullptr;
+        }
+        const auto& level = iterator->second;
         for (const Order& order : level.orders()) {
             if (order.id() == order_id) {
                 return &order;
             }
         }
-    }
-    for (const auto& [price, level] : asks_) {
-        (void)price;
+    } else {
+        const auto iterator = asks_.find(location->second.price);
+        if (iterator == asks_.end()) {
+            return nullptr;
+        }
+        const auto& level = iterator->second;
         for (const Order& order : level.orders()) {
             if (order.id() == order_id) {
                 return &order;
@@ -142,16 +169,27 @@ const Order* OrderBook::find_order(OrderId order_id) const noexcept {
 }
 
 Order* OrderBook::find_order_mutable(OrderId order_id) noexcept {
-    for (auto& [price, level] : bids_) {
-        (void)price;
+    const auto location = locations_.find(order_id);
+    if (location == locations_.end()) {
+        return nullptr;
+    }
+    if (location->second.side == Side::Buy) {
+        auto iterator = bids_.find(location->second.price);
+        if (iterator == bids_.end()) {
+            return nullptr;
+        }
+        auto& level = iterator->second;
         for (Order& order : level.orders()) {
             if (order.id() == order_id) {
                 return &order;
             }
         }
-    }
-    for (auto& [price, level] : asks_) {
-        (void)price;
+    } else {
+        auto iterator = asks_.find(location->second.price);
+        if (iterator == asks_.end()) {
+            return nullptr;
+        }
+        auto& level = iterator->second;
         for (Order& order : level.orders()) {
             if (order.id() == order_id) {
                 return &order;
@@ -188,6 +226,7 @@ void OrderBook::remove_filled_best(Side side) {
             throw std::logic_error("only filled orders can be removed from the book");
         }
         order_ids_.erase(order.id());
+        locations_.erase(order.id());
         level.pop_front();
         if (level.empty()) {
             bids_.erase(bids_.begin());
@@ -202,6 +241,7 @@ void OrderBook::remove_filled_best(Side side) {
             throw std::logic_error("only filled orders can be removed from the book");
         }
         order_ids_.erase(order.id());
+        locations_.erase(order.id());
         level.pop_front();
         if (level.empty()) {
             asks_.erase(asks_.begin());

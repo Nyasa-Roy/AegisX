@@ -6,7 +6,7 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 14 - benchmarking. The repository contains strongly typed domain
+Phase 15 - indexed order lookup. The repository contains strongly typed domain
 objects, matching, events, cancellation, modification, exchange routing,
 CLI/demo tools, invariants, deterministic simulation, replay, and Google
 Benchmark workloads for insertion, matching, cancellation, and mixed events.
