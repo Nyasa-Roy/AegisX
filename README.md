@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 7 - order modification. The repository contains strongly typed domain
-objects, FIFO price levels, bid/ask price priority, limit and market matching,
-deterministic domain events, cancellation, and modification with explicit
-priority semantics. Exchange routing, market-data snapshots, simulation, and
-replay are not implemented yet.
+Phase 8 - multi-instrument exchange routing. The repository contains strongly
+typed domain objects, FIFO price levels, limit and market matching, deterministic
+events, cancellation, modification, and an `Exchange` that maintains an
+independent matching engine for each registered instrument. CLI, market-data
+snapshots, simulation, and replay are not implemented yet.
 
 ## Requirements
 
