@@ -23,6 +23,9 @@ public:
     [[nodiscard]] bool contains_order(OrderId order_id) const noexcept;
     [[nodiscard]] const PriceLevel* best_bid() const noexcept;
     [[nodiscard]] const PriceLevel* best_ask() const noexcept;
+    [[nodiscard]] Order* best_bid_order() noexcept;
+    [[nodiscard]] Order* best_ask_order() noexcept;
+    void remove_filled_best(Side side);
 
 private:
     using BidLevels = std::map<Price, PriceLevel, std::greater<Price>>;

@@ -20,6 +20,7 @@ add_library(aegisx_core STATIC
     src/order_book.cpp
     src/price_level.cpp
     src/project.cpp
+    src/matching_engine.cpp
     src/trade.cpp
 )
 
@@ -51,6 +52,8 @@ if(AEGISX_BUILD_TESTS)
     add_executable(aegisx_tests
         tests/order_tests.cpp
         tests/order_book_tests.cpp
+        tests/event_tests.cpp
+        tests/matching_tests.cpp
         tests/price_level_tests.cpp
         tests/smoke_test.cpp
         tests/trade_tests.cpp

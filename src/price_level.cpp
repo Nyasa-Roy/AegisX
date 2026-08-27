@@ -40,6 +40,20 @@ const Order& PriceLevel::front() const {
     return orders_.front();
 }
 
+Order& PriceLevel::front_mutable() {
+    if (orders_.empty()) {
+        throw std::out_of_range("cannot access the front of an empty price level");
+    }
+    return orders_.front();
+}
+
+void PriceLevel::pop_front() {
+    if (orders_.empty()) {
+        throw std::out_of_range("cannot remove the front of an empty price level");
+    }
+    orders_.pop_front();
+}
+
 const std::deque<Order>& PriceLevel::orders() const noexcept { return orders_; }
 
 }  // namespace aegisx

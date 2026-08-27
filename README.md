@@ -6,10 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 2 - price levels and order book. The repository contains strongly typed
-domain objects, validated orders and trades, FIFO price levels, bid/ask price
-priority, best-price access, unit tests, and the CMake foundation. Matching,
-cancellation, and modification are intentionally not implemented yet.
+Phase 5 - structured domain events. The repository contains strongly typed
+domain objects, FIFO price levels, bid/ask price priority, limit and market
+matching, and deterministic `OrderAccepted`, `TradeExecuted`, and `OrderRested`
+events. Cancellation, modification, and market-data snapshots are not
+implemented yet.
 
 ## Requirements
 
@@ -48,4 +49,4 @@ ctest --test-dir build --output-on-failure
 - Performance claims supported by measurements from the actual machine
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) and
-[docs/data-structures.md](docs/data-structures.md) for design details.
+[docs/matching-algorithm.md](docs/matching-algorithm.md) for design details.

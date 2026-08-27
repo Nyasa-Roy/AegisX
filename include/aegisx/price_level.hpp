@@ -18,6 +18,8 @@ public:
     [[nodiscard]] std::size_t size() const noexcept;
     [[nodiscard]] Quantity total_quantity() const noexcept;
     [[nodiscard]] const Order& front() const;
+    [[nodiscard]] Order& front_mutable();
+    void pop_front();
     [[nodiscard]] const std::deque<Order>& orders() const noexcept;
 
 private:

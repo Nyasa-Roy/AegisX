@@ -53,4 +53,44 @@ const PriceLevel* OrderBook::best_ask() const noexcept {
     return asks_.empty() ? nullptr : &asks_.begin()->second;
 }
 
+Order* OrderBook::best_bid_order() noexcept {
+    return bids_.empty() ? nullptr : &bids_.begin()->second.front_mutable();
+}
+
+Order* OrderBook::best_ask_order() noexcept {
+    return asks_.empty() ? nullptr : &asks_.begin()->second.front_mutable();
+}
+
+void OrderBook::remove_filled_best(Side side) {
+    if (side == Side::Buy) {
+        if (bids_.empty() || bids_.begin()->second.empty()) {
+            throw std::logic_error("cannot remove an order from an empty bid book");
+        }
+        PriceLevel& level = bids_.begin()->second;
+        Order& order = level.front_mutable();
+        if (order.status() != OrderStatus::Filled) {
+            throw std::logic_error("only filled orders can be removed from the book");
+        }
+        order_ids_.erase(order.id());
+        level.pop_front();
+        if (level.empty()) {
+            bids_.erase(bids_.begin());
+        }
+    } else {
+        if (asks_.empty() || asks_.begin()->second.empty()) {
+            throw std::logic_error("cannot remove an order from an empty ask book");
+        }
+        PriceLevel& level = asks_.begin()->second;
+        Order& order = level.front_mutable();
+        if (order.status() != OrderStatus::Filled) {
+            throw std::logic_error("only filled orders can be removed from the book");
+        }
+        order_ids_.erase(order.id());
+        level.pop_front();
+        if (level.empty()) {
+            asks_.erase(asks_.begin());
+        }
+    }
+}
+
 }  // namespace aegisx
