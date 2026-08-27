@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 6 - cancellation. The repository contains strongly typed domain objects,
-FIFO price levels, bid/ask price priority, limit and market matching,
-deterministic domain events, and safe cancellation of active or partially
-filled orders. Modification, exchange routing, and market-data snapshots are
-not implemented yet.
+Phase 7 - order modification. The repository contains strongly typed domain
+objects, FIFO price levels, bid/ask price priority, limit and market matching,
+deterministic domain events, cancellation, and modification with explicit
+priority semantics. Exchange routing, market-data snapshots, simulation, and
+replay are not implemented yet.
 
 ## Requirements
 

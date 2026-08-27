@@ -13,6 +13,7 @@ public:
     explicit PriceLevel(Price price);
 
     void add_order(Order order);
+    [[nodiscard]] std::optional<Order> remove_order(OrderId order_id);
     [[nodiscard]] std::optional<Order> cancel_order(OrderId order_id);
 
     [[nodiscard]] Price price() const noexcept;
@@ -22,6 +23,7 @@ public:
     [[nodiscard]] const Order& front() const;
     [[nodiscard]] Order& front_mutable();
     void pop_front();
+    [[nodiscard]] std::deque<Order>& orders() noexcept;
     [[nodiscard]] const std::deque<Order>& orders() const noexcept;
 
 private:

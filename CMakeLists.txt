@@ -55,6 +55,7 @@ if(AEGISX_BUILD_TESTS)
         tests/event_tests.cpp
         tests/cancellation_tests.cpp
         tests/matching_tests.cpp
+        tests/modification_tests.cpp
         tests/price_level_tests.cpp
         tests/smoke_test.cpp
         tests/trade_tests.cpp

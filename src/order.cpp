@@ -68,4 +68,28 @@ void Order::cancel() {
     status_ = OrderStatus::Cancelled;
 }
 
+void Order::modify(Quantity new_quantity, std::optional<Price> new_price) {
+    if (!is_active()) {
+        throw std::logic_error("only active orders can be modified");
+    }
+    if (new_quantity == 0 || new_quantity <= executed_quantity_) {
+        throw std::invalid_argument("modified quantity must exceed executed quantity");
+    }
+    if (type_ == OrderType::Limit) {
+        if (new_price.has_value() && new_price.value() <= 0) {
+            throw std::invalid_argument("modified limit price must be positive");
+        }
+        if (!new_price.has_value()) {
+            new_price = price_;
+        }
+    } else if (new_price.has_value()) {
+        throw std::invalid_argument("market orders must not have a price");
+    }
+
+    original_quantity_ = new_quantity;
+    remaining_quantity_ = new_quantity - executed_quantity_;
+    price_ = new_price;
+    status_ = executed_quantity_ == 0 ? OrderStatus::Active : OrderStatus::PartiallyFilled;
+}
+
 }  // namespace aegisx

@@ -53,6 +53,15 @@ trades and leaves the book unchanged.
 An unfilled market-order remainder produces no resting event because it is
 discarded by the explicit Phase 4 market-order policy.
 
+Modification semantics are explicit:
+
+- A quantity decrease preserves the order's existing FIFO position.
+- A quantity increase removes and reinserts the order at the back of its price
+  level, losing time priority.
+- A price change removes and reinserts the order at the new price level, losing
+  time priority.
+- Invalid modifications are rejected before the existing order is removed.
+
 Cancellation removes an active order from its price level, emits one
 `OrderCancelled` event, updates the order-ID index, and removes the price level
 when it becomes empty. Filled, cancelled, and unknown orders cannot be

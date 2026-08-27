@@ -28,6 +28,7 @@ public:
 
     void execute(Quantity quantity);
     void cancel();
+    void modify(Quantity new_quantity, std::optional<Price> new_price = std::nullopt);
 
 private:
     OrderId id_;

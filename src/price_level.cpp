@@ -21,13 +21,22 @@ void PriceLevel::add_order(Order order) {
     orders_.push_back(std::move(order));
 }
 
-std::optional<Order> PriceLevel::cancel_order(OrderId order_id) {
+std::optional<Order> PriceLevel::remove_order(OrderId order_id) {
     for (auto iterator = orders_.begin(); iterator != orders_.end(); ++iterator) {
         if (iterator->id() == order_id) {
-            iterator->cancel();
-            Order cancelled_order = std::move(*iterator);
+            Order removed_order = std::move(*iterator);
             orders_.erase(iterator);
-            return cancelled_order;
+            return removed_order;
+        }
+    }
+    return std::nullopt;
+}
+
+std::optional<Order> PriceLevel::cancel_order(OrderId order_id) {
+    for (Order& order : orders_) {
+        if (order.id() == order_id) {
+            order.cancel();
+            return remove_order(order_id);
         }
     }
     return std::nullopt;
@@ -66,6 +75,7 @@ void PriceLevel::pop_front() {
     orders_.pop_front();
 }
 
+std::deque<Order>& PriceLevel::orders() noexcept { return orders_; }
 const std::deque<Order>& PriceLevel::orders() const noexcept { return orders_; }
 
 }  // namespace aegisx

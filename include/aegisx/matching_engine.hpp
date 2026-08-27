@@ -18,6 +18,8 @@ public:
     std::vector<Trade> submit(Order order);
     std::vector<Event> submit_events(Order order);
     std::vector<Event> cancel(OrderId order_id);
+    std::vector<Event> modify(OrderId order_id, Quantity new_quantity,
+                              std::optional<Price> new_price = std::nullopt);
 
 private:
     OrderBook book_;

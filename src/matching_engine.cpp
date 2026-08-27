@@ -27,6 +27,45 @@ std::vector<Event> MatchingEngine::cancel(OrderId order_id) {
     return events;
 }
 
+std::vector<Event> MatchingEngine::modify(OrderId order_id, Quantity new_quantity,
+                                           std::optional<Price> new_price) {
+    const Order* current_order = book_.find_order(order_id);
+    if (current_order == nullptr) {
+        throw std::invalid_argument("order is not active in the matching engine");
+    }
+
+    const Quantity old_quantity = current_order->original_quantity();
+    const std::optional<Price> old_price = current_order->price();
+    const bool price_changed = new_price.has_value() && new_price != old_price;
+    const bool priority_reset = price_changed || new_quantity > old_quantity;
+
+    if (priority_reset) {
+        Order validated_order = *current_order;
+        validated_order.modify(new_quantity, new_price);
+        std::optional<Order> extracted_order = book_.extract_order(order_id);
+        if (!extracted_order.has_value()) {
+            throw std::logic_error("order disappeared during modification");
+        }
+        extracted_order->modify(new_quantity, new_price);
+        const Order& modified_order = extracted_order.value();
+        const Price modified_price = modified_order.price().value();
+        const Quantity remaining_quantity = modified_order.remaining_quantity();
+        const Side side = modified_order.side();
+        book_.add_order(std::move(extracted_order.value()));
+        return {Event{OrderModified{order_id, instrument_id(), side, modified_price,
+                                    new_quantity, remaining_quantity, true}}};
+    }
+
+    Order* mutable_order = book_.find_order_mutable(order_id);
+    if (mutable_order == nullptr) {
+        throw std::logic_error("order disappeared during modification");
+    }
+    mutable_order->modify(new_quantity, new_price);
+    return {Event{OrderModified{order_id, instrument_id(), mutable_order->side(),
+                                mutable_order->price().value(), mutable_order->original_quantity(),
+                                mutable_order->remaining_quantity(), false}}};
+}
+
 std::vector<Trade> MatchingEngine::submit(Order order) {
     const std::vector<Event> events = submit_events(std::move(order));
     std::vector<Trade> trades;

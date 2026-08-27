@@ -36,6 +36,34 @@ void OrderBook::add_order(Order order) {
     order_ids_.insert(order_id);
 }
 
+std::optional<Order> OrderBook::extract_order(OrderId order_id) {
+    if (!order_ids_.contains(order_id)) {
+        return std::nullopt;
+    }
+
+    for (auto iterator = bids_.begin(); iterator != bids_.end(); ++iterator) {
+        std::optional<Order> removed_order = iterator->second.remove_order(order_id);
+        if (removed_order.has_value()) {
+            order_ids_.erase(order_id);
+            if (iterator->second.empty()) {
+                bids_.erase(iterator);
+            }
+            return removed_order;
+        }
+    }
+    for (auto iterator = asks_.begin(); iterator != asks_.end(); ++iterator) {
+        std::optional<Order> removed_order = iterator->second.remove_order(order_id);
+        if (removed_order.has_value()) {
+            order_ids_.erase(order_id);
+            if (iterator->second.empty()) {
+                asks_.erase(iterator);
+            }
+            return removed_order;
+        }
+    }
+    return std::nullopt;
+}
+
 std::optional<Order> OrderBook::cancel_order(OrderId order_id) {
     if (!order_ids_.contains(order_id)) {
         return std::nullopt;
@@ -73,6 +101,46 @@ std::size_t OrderBook::bid_level_count() const noexcept { return bids_.size(); }
 std::size_t OrderBook::ask_level_count() const noexcept { return asks_.size(); }
 bool OrderBook::contains_order(OrderId order_id) const noexcept {
     return order_ids_.contains(order_id);
+}
+
+const Order* OrderBook::find_order(OrderId order_id) const noexcept {
+    for (const auto& [price, level] : bids_) {
+        (void)price;
+        for (const Order& order : level.orders()) {
+            if (order.id() == order_id) {
+                return &order;
+            }
+        }
+    }
+    for (const auto& [price, level] : asks_) {
+        (void)price;
+        for (const Order& order : level.orders()) {
+            if (order.id() == order_id) {
+                return &order;
+            }
+        }
+    }
+    return nullptr;
+}
+
+Order* OrderBook::find_order_mutable(OrderId order_id) noexcept {
+    for (auto& [price, level] : bids_) {
+        (void)price;
+        for (Order& order : level.orders()) {
+            if (order.id() == order_id) {
+                return &order;
+            }
+        }
+    }
+    for (auto& [price, level] : asks_) {
+        (void)price;
+        for (Order& order : level.orders()) {
+            if (order.id() == order_id) {
+                return &order;
+            }
+        }
+    }
+    return nullptr;
 }
 
 const PriceLevel* OrderBook::best_bid() const noexcept {
