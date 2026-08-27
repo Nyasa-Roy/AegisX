@@ -41,6 +41,9 @@ endif()
 add_executable(aegisx examples/demo.cpp)
 target_link_libraries(aegisx PRIVATE aegisx_core)
 
+add_executable(aegisx-cli tools/cli.cpp)
+target_link_libraries(aegisx-cli PRIVATE aegisx_core)
+
 if(AEGISX_BUILD_TESTS)
     FetchContent_Declare(
         googletest

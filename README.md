@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 8 - multi-instrument exchange routing. The repository contains strongly
-typed domain objects, FIFO price levels, limit and market matching, deterministic
-events, cancellation, modification, and an `Exchange` that maintains an
-independent matching engine for each registered instrument. CLI, market-data
-snapshots, simulation, and replay are not implemented yet.
+Phase 9 - CLI and demo. The repository contains strongly typed domain objects,
+FIFO price levels, limit and market matching, deterministic events,
+cancellation, modification, multi-instrument routing, a simple interactive CLI,
+and a complete demonstration scenario. Invariants, simulation, replay, and
+benchmarking are not implemented yet.
 
 ## Requirements
 
@@ -32,7 +32,17 @@ Run the demo:
 build\aegisx.exe
 ```
 
-On Unix-like systems, use `./build/aegisx` instead.
+Run the CLI:
+
+```text
+build\aegisx-cli.exe
+```
+
+Commands include `BUY`, `SELL`, `MARKET_BUY`, `MARKET_SELL`, `CANCEL`,
+`MODIFY`, `BOOK`, `TRADES`, `HELP`, and `QUIT`. Instruments and order IDs are
+numeric; submitted orders receive sequential IDs starting at 1.
+
+On Unix-like systems, use `./build/aegisx` and `./build/aegisx-cli` instead.
 
 ## Test
 
