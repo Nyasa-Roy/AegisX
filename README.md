@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 12 - event recording and replay. The repository contains strongly typed
-domain objects, FIFO price levels, matching, events, cancellation, modification,
-multi-instrument routing, CLI/demo tools, invariants, deterministic simulation,
-and stable text event-log recording/replay. Reference comparison and
-benchmarking are not implemented yet.
+Phase 13 - reference implementation. The repository contains strongly typed
+domain objects, matching, events, cancellation, modification, exchange
+routing, CLI/demo tools, invariants, simulation, event recording/replay, and a
+simple reference engine for differential correctness checks. Benchmarking and
+profiling are not implemented yet.
 
 ## Requirements
 
@@ -26,7 +26,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Run a recorded simulation and replay it:
+Run a simulation and replay it:
 
 ```text
 build\aegisx-sim.exe --orders 100000 --seed 42 --record data\run.log
@@ -34,8 +34,8 @@ build\aegisx-replay.exe --input data\run.log
 ```
 
 Run the demo or interactive CLI with `build\aegisx.exe` and
-`build\aegisx-cli.exe`. On Unix-like systems, use `./build/aegisx-sim`,
-`./build/aegisx-replay`, `./build/aegisx`, and `./build/aegisx-cli` instead.
+`build\aegisx-cli.exe`. On Unix-like systems, use the corresponding `./build/`
+paths.
 
 ## Test
 
@@ -53,5 +53,6 @@ ctest --test-dir build --output-on-failure
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md),
 [docs/matching-algorithm.md](docs/matching-algorithm.md),
-[docs/data-structures.md](docs/data-structures.md), and
-[docs/simulation.md](docs/simulation.md) for design details.
+[docs/data-structures.md](docs/data-structures.md),
+[docs/simulation.md](docs/simulation.md), and [docs/replay.md](docs/replay.md)
+for design details.

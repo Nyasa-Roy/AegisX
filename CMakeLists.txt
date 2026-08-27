@@ -21,6 +21,7 @@ add_library(aegisx_core STATIC
     src/price_level.cpp
     src/project.cpp
     src/replay.cpp
+    src/reference_engine.cpp
     src/matching_engine.cpp
     src/exchange.cpp
     src/invariants.cpp
@@ -70,6 +71,7 @@ if(AEGISX_BUILD_TESTS)
         tests/invariant_tests.cpp
         tests/simulation_tests.cpp
         tests/replay_tests.cpp
+        tests/reference_tests.cpp
         tests/cancellation_tests.cpp
         tests/matching_tests.cpp
         tests/modification_tests.cpp
