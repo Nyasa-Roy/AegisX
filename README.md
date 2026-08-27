@@ -6,11 +6,11 @@ into a testable and benchmarkable systems project.
 
 ## Status
 
-Phase 10 - invariants and correctness. The repository contains strongly typed
+Phase 11 - deterministic simulation. The repository contains strongly typed
 domain objects, FIFO price levels, limit and market matching, deterministic
-events, cancellation, modification, multi-instrument routing, a CLI/demo, and
-runtime-checkable order and book invariants. Simulation, replay, and
-benchmarking are not implemented yet.
+events, cancellation, modification, multi-instrument routing, a CLI/demo,
+runtime invariants, and a state-aware seeded simulator. Replay and benchmarking
+are not implemented yet.
 
 ## Requirements
 
@@ -26,17 +26,15 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Run the demo:
+Run the simulator:
 
 ```text
-build\aegisx.exe
+build\aegisx-sim.exe --orders 100000 --seed 42
 ```
 
-Run the CLI:
-
-```text
-build\aegisx-cli.exe
-```
+Run the demo or interactive CLI with `build\aegisx.exe` and
+`build\aegisx-cli.exe`. On Unix-like systems, use `./build/aegisx-sim`,
+`./build/aegisx`, and `./build/aegisx-cli` instead.
 
 ## Test
 
@@ -53,5 +51,6 @@ ctest --test-dir build --output-on-failure
 - Performance claims supported by measurements from the actual machine
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md),
-[docs/matching-algorithm.md](docs/matching-algorithm.md), and
-[docs/data-structures.md](docs/data-structures.md) for design details.
+[docs/matching-algorithm.md](docs/matching-algorithm.md),
+[docs/data-structures.md](docs/data-structures.md), and
+[docs/simulation.md](docs/simulation.md) for design details.

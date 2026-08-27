@@ -23,6 +23,7 @@ add_library(aegisx_core STATIC
     src/matching_engine.cpp
     src/exchange.cpp
     src/invariants.cpp
+    src/simulation.cpp
     src/trade.cpp
 )
 
@@ -45,6 +46,9 @@ target_link_libraries(aegisx PRIVATE aegisx_core)
 add_executable(aegisx-cli tools/cli.cpp)
 target_link_libraries(aegisx-cli PRIVATE aegisx_core)
 
+add_executable(aegisx-sim tools/simulator.cpp)
+target_link_libraries(aegisx-sim PRIVATE aegisx_core)
+
 if(AEGISX_BUILD_TESTS)
     FetchContent_Declare(
         googletest
@@ -60,6 +64,7 @@ if(AEGISX_BUILD_TESTS)
         tests/event_tests.cpp
         tests/exchange_tests.cpp
         tests/invariant_tests.cpp
+        tests/simulation_tests.cpp
         tests/cancellation_tests.cpp
         tests/matching_tests.cpp
         tests/modification_tests.cpp
